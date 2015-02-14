@@ -113,4 +113,7 @@
       </plugin>
     </plugins>
   </build>
+  <name>Graphity Socialnet</name>
+  <url>https://github.com/sebschlicht/graphity-socialnet</url>
+  <description>Basic social network interfaces and classes for Graphity.</description>
 </project>
