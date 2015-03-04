@@ -11,6 +11,8 @@ package de.uniko.sebschlicht.graphity.bootstrap;
  */
 public class User {
 
+    private final long _id;
+
     //TODO in Neo4j these are only valid as long as no node was deleted!
     private long _nodeId;
 
@@ -27,9 +29,15 @@ public class User {
      */
     private long[] _postNodeIds;
 
-    public User() {
+    public User(
+            long id) {
+        _id = id;
         _subscriptions = null;
         _postNodeIds = null;
+    }
+
+    public long getId() {
+        return _id;
     }
 
     public void setNodeId(long nodeId) {

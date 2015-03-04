@@ -51,9 +51,10 @@ public class MutableState {
     public void addPost(long userId, boolean generated) {
         int[] numUserPosts = _numPosts.get(userId);
         if (numUserPosts == null) {
-            _numPosts.put(userId, new int[] {
+            numUserPosts = new int[] {
                 0, 0
-            });
+            };
+            _numPosts.put(userId, numUserPosts);
         }
         if (!generated) {
             numUserPosts[0] += 1;

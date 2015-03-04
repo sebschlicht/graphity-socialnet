@@ -1,5 +1,6 @@
 package de.uniko.sebschlicht.graphity.bootstrap;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,8 +46,12 @@ public class UserManager {
     }
 
     public User addUser(long id) {
-        User user = new User();
+        User user = new User(id);
         _users.put(id, user);
         return user;
+    }
+
+    public Collection<User> getUsers() {
+        return _users.values();
     }
 }

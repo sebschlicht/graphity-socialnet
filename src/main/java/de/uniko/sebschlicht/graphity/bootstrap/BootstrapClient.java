@@ -43,46 +43,6 @@ public abstract class BootstrapClient {
 
     /**
      * Bulk load a social network state into the news feed service storage.
-     * This method has to load all the data in a single call.
-     * 
-     * @param userIds
-     *            user identifiers
-     * @param subscriptions
-     *            list of arrays with identifier of users the respective user
-     *            subscribed to, list has the same order as userIds
-     * @param numPosts
-     *            number of posts per respective user, array has the same order
-     *            as userIds
-     */
-    public void bootstrap(
-            long[] userIds,
-            List<long[]> subscriptions,
-            int[] numPosts) {
-        _users = new UserManager();
-        // load users
-        _users.setUserIds(userIds);
-        for (int i = 0; i < userIds.length; ++i) {
-            _users.addUserByIndex(i);
-        }
-        System.out.println("users loaded.");
-        createUsers(userIds);
-        System.out.println(userIds.length + " users created.");
-
-        // subscribe users
-        long numSubscriptions = createSubscriptions(subscriptions);
-        System.out.println(numSubscriptions + " subscriptions registered.");
-
-        // load, create and link posts
-        long numPostsTotal = loadPosts(numPosts);
-        System.out.println(numPostsTotal + " posts loaded.");
-        createPosts(numPosts);
-        System.out.println("posts created.");
-        linkPosts(numPosts);
-        System.out.println("posts linked.");
-    }
-
-    /**
-     * Bulk load a social network state into the news feed service storage.
      * The social network state is read from the bootstrap log file.
      * This method has to load all the data in a single call.
      * 
@@ -91,7 +51,8 @@ public abstract class BootstrapClient {
      * @throws IOException
      */
     public void bootstrap(File fBootstrapLog) throws IOException {
-        BootstrapLoader bootstrapLoader = new BootstrapLoader(fBootstrapLog);
+        BootstrapLoader bootstrapLoader =
+                new BootstrapLoader(fBootstrapLog, true);
         MutableState state = bootstrapLoader.getState();
         _users = new UserManager();
 
@@ -136,59 +97,53 @@ public abstract class BootstrapClient {
         for (Map.Entry<Long, int[]> entry : numPosts.entrySet()) {
             user = _users.loadUser(entry.getKey());
             int[] numUserPosts = entry.getValue();
-            //TODO how to calculate the feed size? we could sub the array length on $a$
-            user.setNumPosts(numUserPosts[1]);// total
-            long[] postNodeIds = new long[numUserPosts[0]];// user-generated
+            long[] postNodeIds = new long[numUserPosts[1]];// total number of posts // we are bootstrapping!
             user.setPostNodeIds(postNodeIds);
         }
 
-        //TODO convert to proper state for bootstrapping
+        bootstrap();
+    }
+
+    protected void bootstrap() {
+        long numUsers = createUsers();
+        System.out.println(numUsers + " users created.");
+
+        // subscribe users
+        long numSubscriptions = createSubscriptions();
+        System.out.println(numSubscriptions + " subscriptions registered.");
+
+        // create and link posts
+        long numPostsTotal = createPosts();
+        System.out.println(numPostsTotal + " posts created.");
+        linkPosts();
+        System.out.println("posts linked.");
     }
 
     /**
      * Add the users to the database.
      * 
-     * @param userIds
-     *            user identifiers
+     * @return number of users
      */
-    abstract protected void createUsers(long[] userIds);
+    abstract protected long createUsers();
 
     /**
      * Link the users in the database.
      * 
-     * @param subscriptions
-     *            subscriptions of the users
      * @return number of subscriptions
      */
-    abstract protected long createSubscriptions(List<long[]> subscriptions);
-
-    /**
-     * Load the posts for each user.
-     * 
-     * @param numPosts
-     *            number of posts per respective user, array has the same order
-     *            as userIds
-     * @return number of posts
-     */
-    abstract protected long loadPosts(int[] numPosts);
+    abstract protected long createSubscriptions();
 
     /**
      * Add the posts to the database.
      * 
-     * @param numPosts
-     *            number of posts per respective user, array has the same order
-     *            as userIds
+     * @return number of posts
      */
-    abstract protected void createPosts(int[] numPosts);
+    abstract protected long createPosts();
 
     /**
      * Link the posts in the database.
-     * 
-     * @param numPosts
-     *            number of posts per respective user, array has the same order
-     *            as userIds
      */
-    abstract protected void linkPosts(int[] numPosts);
+    abstract protected void linkPosts();
 
     /**
      * Generates a post message using random characters of the allowed

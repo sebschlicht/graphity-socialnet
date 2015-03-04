@@ -37,8 +37,10 @@ public class BootstrapLoader {
         _fileLoader = new BootstrapFileLoader(fBootstrapLog.getAbsolutePath());
         _state = new MutableState();
         Queue<Request> requests = _fileLoader.loadRequests();
-        System.out.println("merging " + requests.size() + " requests...");
-        _state.mergeRequests(requests, pushPosts);
+        for (int i = 0; i < 10; ++i) {
+            System.out.println("merging " + requests.size() + " requests...");
+            _state.mergeRequests(requests, pushPosts);
+        }
     }
 
     public MutableState getState() {
