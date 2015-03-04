@@ -8,13 +8,16 @@ import de.uniko.sebschlicht.graphity.bootstrap.generate.MutableState;
 import de.uniko.sebschlicht.socialnet.requests.Request;
 
 /**
- * Load the state of the social network state from the bootstrap log file.
+ * Load the state of social networks from bootstrap log files.
  * 
  * @author sebschlicht
  * 
  */
 public class BootstrapLoader {
 
+    /**
+     * bootstrap log file loader
+     */
     protected BootstrapFileLoader _fileLoader;
 
     /**
@@ -23,7 +26,7 @@ public class BootstrapLoader {
     protected MutableState _state;
 
     /**
-     * Loads the state of the social network state from the bootstrap log file.
+     * Loads the state of a social network from a bootstrap log file.
      * 
      * @param fBootstrapLog
      *            bootstrap log file

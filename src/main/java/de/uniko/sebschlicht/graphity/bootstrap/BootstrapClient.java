@@ -42,7 +42,7 @@ public abstract class BootstrapClient {
     protected UserManager _users;
 
     /**
-     * Bulk load a social network state into the news feed service storage.
+     * Bulk loads a social network state into the news feed service storage.
      * The social network state is read from the bootstrap log file.
      * This method has to load all the data in a single call.
      * 
@@ -104,7 +104,13 @@ public abstract class BootstrapClient {
         bootstrap();
     }
 
+    /**
+     * Bulk loads a social network state into the news feed storage.
+     * The social network state is read from the current state of this client.
+     * This method has to load all the data in a single call.
+     */
     protected void bootstrap() {
+        // create users
         long numUsers = createUsers();
         System.out.println(numUsers + " users created.");
 
@@ -120,28 +126,28 @@ public abstract class BootstrapClient {
     }
 
     /**
-     * Add the users to the database.
+     * Adds the users to the database.
      * 
      * @return number of users
      */
     abstract protected long createUsers();
 
     /**
-     * Link the users in the database.
+     * Links the users in the database.
      * 
      * @return number of subscriptions
      */
     abstract protected long createSubscriptions();
 
     /**
-     * Add the posts to the database.
+     * Adds the posts to the database.
      * 
      * @return number of posts
      */
     abstract protected long createPosts();
 
     /**
-     * Link the posts in the database.
+     * Links the posts in the database.
      */
     abstract protected void linkPosts();
 
