@@ -121,8 +121,8 @@ public abstract class BootstrapClient {
         // create and link posts
         long numPostsTotal = createPosts();
         System.out.println(numPostsTotal + " posts created.");
-        linkPosts();
-        System.out.println("posts linked.");
+        numPostsTotal = linkPosts();
+        System.out.println(numPostsTotal + " posts linked.");
     }
 
     /**
@@ -142,14 +142,16 @@ public abstract class BootstrapClient {
     /**
      * Adds the posts to the database.
      * 
-     * @return number of posts
+     * @return number of posts created
      */
     abstract protected long createPosts();
 
     /**
      * Links the posts in the database.
+     * 
+     * @return number of posts linked
      */
-    abstract protected void linkPosts();
+    abstract protected long linkPosts();
 
     /**
      * Generates a post message using random characters of the allowed
@@ -181,7 +183,7 @@ public abstract class BootstrapClient {
      *            user identifier list
      * @return array representation of the list
      */
-    private static long[] listToArray(List<Long> list) {
+    protected static long[] listToArray(List<Long> list) {
         long[] array = new long[list.size()];
         int i = 0;
         for (long value : list) {
