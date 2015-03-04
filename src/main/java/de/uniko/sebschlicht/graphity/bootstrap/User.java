@@ -17,6 +17,14 @@ public class User {
     //TODO use long array if too memory consumptive
     private long[] _subscriptions;
 
+    /**
+     * total number of posts
+     */
+    private int _numPosts;
+
+    /**
+     * identifiers of user-generated post nodes
+     */
     private long[] _postNodeIds;
 
     public User() {
@@ -38,6 +46,14 @@ public class User {
 
     public long[] getSubscriptions() {
         return _subscriptions;
+    }
+
+    public void setNumPosts(int numPosts) {
+        _numPosts = numPosts;
+    }
+
+    public int getNumPosts() {
+        return _numPosts;
     }
 
     public void setPostNodeIds(long[] postNodeIds) {

@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.TreeSet;
 
+import de.uniko.sebschlicht.graphity.bootstrap.generate.MutableState;
 import de.uniko.sebschlicht.graphity.bootstrap.load.BootstrapLoader;
 import de.uniko.sebschlicht.socialnet.Subscription;
 
@@ -90,6 +92,8 @@ public abstract class BootstrapClient {
      */
     public void bootstrap(File fBootstrapLog) throws IOException {
         BootstrapLoader bootstrapLoader = new BootstrapLoader(fBootstrapLog);
+        MutableState state = bootstrapLoader.getState();
+        _users = new UserManager();
 
         // convert from mutable to final social network state
         long prevUserId = -1, userId = 0;
@@ -97,8 +101,7 @@ public abstract class BootstrapClient {
         List<Long> userSubscriptions = null;
 
         // load subscriptions and followers
-        TreeSet<Subscription> subscriptions =
-                bootstrapLoader.getSubscriptions();
+        TreeSet<Subscription> subscriptions = state.getSubscriptions();
         int iSubscription = 0;
         int numSubscriptions = subscriptions.size();
         for (Subscription subscription : subscriptions) {
@@ -108,13 +111,7 @@ public abstract class BootstrapClient {
                 // make previous user persistent when switching to a new user
                 if (userSubscriptions != null) {
                     user = _users.addUser(prevUserId);
-                    long[] aUserSubscriptions =
-                            new long[userSubscriptions.size()];
-                    int i = 0;
-                    for (long idFollowed : userSubscriptions) {
-                        aUserSubscriptions[i] = idFollowed;
-                        i += 1;
-                    }
+                    long[] aUserSubscriptions = listToArray(userSubscriptions);
                     user.setSubscriptions(aUserSubscriptions);
                 }
                 // switch to new user
@@ -128,15 +125,21 @@ public abstract class BootstrapClient {
             // make persistent if last user
             if (iSubscription == numSubscriptions - 1) {
                 user = _users.addUser(userId);
-                long[] aUserSubscriptions = new long[userSubscriptions.size()];
-                int i = 0;
-                for (long idFollowed : userSubscriptions) {
-                    aUserSubscriptions[i] = idFollowed;
-                    i += 1;
-                }
+                long[] aUserSubscriptions = listToArray(userSubscriptions);
                 user.setSubscriptions(aUserSubscriptions);
             }
             iSubscription += 1;
+        }
+
+        // load posts and authors
+        Map<Long, int[]> numPosts = state.getNumPosts();
+        for (Map.Entry<Long, int[]> entry : numPosts.entrySet()) {
+            user = _users.loadUser(entry.getKey());
+            int[] numUserPosts = entry.getValue();
+            //TODO how to calculate the feed size? we could sub the array length on $a$
+            user.setNumPosts(numUserPosts[1]);// total
+            long[] postNodeIds = new long[numUserPosts[0]];// user-generated
+            user.setPostNodeIds(postNodeIds);
         }
 
         //TODO convert to proper state for bootstrapping
@@ -208,5 +211,22 @@ public abstract class BootstrapClient {
      */
     protected static char getRandomPostChar() {
         return POST_SYMBOLS[RANDOM.nextInt(POST_SYMBOLS.length)];
+    }
+
+    /**
+     * Converts a list with user identifiers to an array.
+     * 
+     * @param list
+     *            user identifier list
+     * @return array representation of the list
+     */
+    private static long[] listToArray(List<Long> list) {
+        long[] array = new long[list.size()];
+        int i = 0;
+        for (long value : list) {
+            array[i] = value;
+            i += 1;
+        }
+        return array;
     }
 }
