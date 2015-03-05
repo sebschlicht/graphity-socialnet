@@ -26,8 +26,7 @@ public class RequestFeed extends Request {
 
     @Override
     public String[] toStringArray() {
-        return new String[] {
-            String.valueOf(id)
-        };
+        throw new IllegalStateException(
+                "toStringArray not implemented for RequestFeed!");
     }
 }

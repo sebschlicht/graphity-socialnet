@@ -22,6 +22,11 @@ import de.uniko.sebschlicht.socialnet.requests.RequestUnfollow;
 public class MutableState {
 
     /**
+     * requests leading to the current social network state
+     */
+    protected Queue<Request> _requests;
+
+    /**
      * subscriptions currently present
      */
     protected TreeSet<Subscription> _subscriptions;
@@ -64,6 +69,19 @@ public class MutableState {
 
     public Map<Long, int[]> getNumPosts() {
         return _numPosts;
+    }
+
+    public void setRequests(Queue<Request> requests, boolean pushPosts) {
+        _requests = requests;
+        mergeRequests(requests, pushPosts);
+    }
+
+    public void addRequests(Queue<Request> requests) {
+        _requests.addAll(requests);
+    }
+
+    public Queue<Request> getRequests() {
+        return _requests;
     }
 
     /**
