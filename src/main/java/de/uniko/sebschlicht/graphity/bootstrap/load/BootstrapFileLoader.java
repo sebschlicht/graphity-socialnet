@@ -51,7 +51,11 @@ public class BootstrapFileLoader extends CsvParser<Request> {
                 idFollowed = Long.valueOf(entry[2]);
                 return new RequestFollow(idActor, idFollowed);
             case POST:
-                return new RequestPost(idActor, entry[2]);
+                String message = null;
+                if (entry.length > 2) {// post message already generated
+                    message = entry[2];
+                }
+                return new RequestPost(idActor, message);
             case UNFOLLOW:
                 idFollowed = Long.valueOf(entry[2]);
                 return new RequestUnfollow(idActor, idFollowed);

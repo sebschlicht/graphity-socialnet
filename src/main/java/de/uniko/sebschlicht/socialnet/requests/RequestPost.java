@@ -34,8 +34,14 @@ public class RequestPost extends Request {
 
     @Override
     public String[] toStringArray() {
-        return new String[] {
-            String.valueOf(_type.getId()), String.valueOf(id)
-        };
+        if (message == null) {
+            return new String[] {
+                String.valueOf(_type.getId()), String.valueOf(id)
+            };
+        } else {
+            return new String[] {
+                String.valueOf(_type.getId()), String.valueOf(id), message
+            };
+        }
     }
 }
