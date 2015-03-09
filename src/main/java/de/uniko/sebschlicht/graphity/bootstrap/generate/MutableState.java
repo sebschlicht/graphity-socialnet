@@ -88,7 +88,7 @@ public class MutableState {
      * Applies requests to the current social network state.
      * 
      * @param requests
-     *            requests to be bootstrapped
+     *            requests to be merged
      * @param pushPosts
      *            if set to true, updates of subscriptions will generate post
      *            messages for the respective users
@@ -96,47 +96,57 @@ public class MutableState {
      *             if an unknown request type occurs
      */
     public void mergeRequests(Queue<Request> requests, boolean pushPosts) {
-        RequestFollow rfo;
-        RequestPost rp;
-        RequestUnfollow ru;
-
-        // load subscriptions and post counts
-        Subscription subscription;
         for (Request request : requests) {
-            switch (request.getType()) {
-                case FOLLOW:
-                    rfo = (RequestFollow) request;
-                    subscription =
-                            new Subscription(rfo.getIdSubscriber(),
-                                    rfo.getIdFollowed());
-                    addSubscription(subscription);
-                    if (pushPosts) {
-                        addPost(rfo.getIdSubscriber(), true);
-                        addPost(rfo.getIdFollowed(), true);
-                    }
-                    break;
+            mergeRequest(request, pushPosts);
+        }
+    }
 
-                case POST:
-                    rp = (RequestPost) request;
-                    addPost(rp.getId(), false);
-                    break;
+    /**
+     * Applies a request to the current social network state.
+     * 
+     * @param request
+     *            request to be merged
+     * @param pushPosts
+     *            if set to true, updates of subscriptions will generate post
+     *            messages for the respective users
+     * @throws IllegalStateException
+     *             if an unknown request type occurs
+     */
+    public void mergeRequest(Request request, boolean pushPosts) {
+        Subscription subscription;
+        switch (request.getType()) {
+            case FOLLOW:
+                RequestFollow rfo = (RequestFollow) request;
+                subscription =
+                        new Subscription(rfo.getIdSubscriber(),
+                                rfo.getIdFollowed());
+                addSubscription(subscription);
+                if (pushPosts) {
+                    addPost(rfo.getIdSubscriber(), true);
+                    addPost(rfo.getIdFollowed(), true);
+                }
+                break;
 
-                case UNFOLLOW:
-                    ru = (RequestUnfollow) request;
-                    subscription =
-                            new Subscription(ru.getIdSubscriber(),
-                                    ru.getIdFollowed());
-                    removeSubscription(subscription);
-                    if (pushPosts) {
-                        addPost(ru.getIdSubscriber(), true);
-                        addPost(ru.getIdFollowed(), true);
-                    }
-                    break;
+            case POST:
+                RequestPost rp = (RequestPost) request;
+                addPost(rp.getId(), false);
+                break;
 
-                default:
-                    throw new IllegalStateException("unknown request type \""
-                            + request.getType() + "\"");
-            }
+            case UNFOLLOW:
+                RequestUnfollow ru = (RequestUnfollow) request;
+                subscription =
+                        new Subscription(ru.getIdSubscriber(),
+                                ru.getIdFollowed());
+                removeSubscription(subscription);
+                if (pushPosts) {
+                    addPost(ru.getIdSubscriber(), true);
+                    addPost(ru.getIdFollowed(), true);
+                }
+                break;
+
+            default:
+                throw new IllegalStateException("unknown request type \""
+                        + request.getType() + "\"");
         }
     }
 }
