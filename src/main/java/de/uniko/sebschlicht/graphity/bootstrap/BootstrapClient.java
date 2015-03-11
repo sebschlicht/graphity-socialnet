@@ -14,8 +14,6 @@ import de.uniko.sebschlicht.socialnet.Subscription;
 
 public abstract class BootstrapClient {
 
-    protected static boolean IS_GRAPHITY = false;
-
     protected static Random RANDOM = new Random();
 
     /**
@@ -39,7 +37,14 @@ public abstract class BootstrapClient {
         POST_SYMBOLS = postSymbols.toString().toCharArray();
     }
 
+    protected boolean _isGraphity;
+
     protected UserManager _users;
+
+    public BootstrapClient(
+            boolean isGraphity) {
+        _isGraphity = isGraphity;
+    }
 
     /**
      * Bulk loads a social network state into the news feed service storage.
