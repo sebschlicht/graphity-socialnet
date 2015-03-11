@@ -110,6 +110,10 @@ public abstract class BootstrapClient {
      * This method has to load all the data in a single call.
      */
     protected void bootstrap() {
+        // create posts
+        long numPostsTotal = createPosts();
+        System.out.println(numPostsTotal + " posts created.");
+
         // create users
         long numUsers = createUsers();
         System.out.println(numUsers + " users created.");
@@ -118,9 +122,7 @@ public abstract class BootstrapClient {
         long numSubscriptions = createSubscriptions();
         System.out.println(numSubscriptions + " subscriptions registered.");
 
-        // create and link posts
-        long numPostsTotal = createPosts();
-        System.out.println(numPostsTotal + " posts created.");
+        // link posts
         numPostsTotal = linkPosts();
         System.out.println(numPostsTotal + " posts linked.");
     }
