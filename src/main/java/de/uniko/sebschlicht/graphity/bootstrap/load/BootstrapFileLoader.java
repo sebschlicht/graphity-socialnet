@@ -11,6 +11,7 @@ import de.uniko.sebschlicht.socialnet.requests.RequestFollow;
 import de.uniko.sebschlicht.socialnet.requests.RequestPost;
 import de.uniko.sebschlicht.socialnet.requests.RequestType;
 import de.uniko.sebschlicht.socialnet.requests.RequestUnfollow;
+import de.uniko.sebschlicht.socialnet.requests.RequestUser;
 
 public class BootstrapFileLoader extends CsvParser<Request> {
 
@@ -59,6 +60,8 @@ public class BootstrapFileLoader extends CsvParser<Request> {
             case UNFOLLOW:
                 idFollowed = Long.valueOf(entry[2]);
                 return new RequestUnfollow(idActor, idFollowed);
+            case USER:
+                return new RequestUser(idActor);
             default:
                 throw new IllegalStateException("unknown request type \""
                         + type + "\"");
