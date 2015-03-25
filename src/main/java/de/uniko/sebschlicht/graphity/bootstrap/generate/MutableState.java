@@ -10,6 +10,7 @@ import de.uniko.sebschlicht.socialnet.requests.Request;
 import de.uniko.sebschlicht.socialnet.requests.RequestFollow;
 import de.uniko.sebschlicht.socialnet.requests.RequestPost;
 import de.uniko.sebschlicht.socialnet.requests.RequestUnfollow;
+import de.uniko.sebschlicht.socialnet.requests.RequestUser;
 
 /**
  * Holds the social network state.
@@ -39,6 +40,12 @@ public class MutableState {
     public MutableState() {
         _subscriptions = new TreeSet<Subscription>();
         _numPosts = new HashMap<>();
+    }
+
+    public void addUser(long id) {
+        _numPosts.put(id, new int[] {
+            0, 0
+        });
     }
 
     public boolean addSubscription(Subscription subscription) {
@@ -142,6 +149,11 @@ public class MutableState {
                     addPost(ru.getIdSubscriber(), true);
                     addPost(ru.getIdFollowed(), true);
                 }
+                break;
+
+            case USER:
+                RequestUser rus = (RequestUser) request;
+                addUser(rus.getId());
                 break;
 
             default:

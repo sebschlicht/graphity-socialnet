@@ -8,7 +8,9 @@ public enum RequestType {
 
     POST(2),
 
-    UNFOLLOW(3);
+    UNFOLLOW(3),
+
+    USER(4);
 
     private final int id;
 
@@ -30,6 +32,8 @@ public enum RequestType {
             return POST;
         } else if (UNFOLLOW.getId() == id) {
             return UNFOLLOW;
+        } else if (USER.getId() == id) {
+            return USER;
         }
         return null;
     }
